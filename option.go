@@ -5,7 +5,7 @@ import "time"
 type option struct {
 	errCallback    []func(error)
 	reloadInterval time.Duration
-	initCallback func()
+	initCallback   func()
 }
 
 var DefaultReloadInterval = time.Second * 5

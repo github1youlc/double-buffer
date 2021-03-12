@@ -12,7 +12,7 @@ func TestOption(t *testing.T) {
 		WithErrCallback(func(err error) {}),
 		WithReloadInterval(time.Second),
 		WithInitCallback(func() {}),
-		)
+	)
 
 	assert.EqualValues(t, time.Second, opt.reloadInterval)
 	assert.Len(t, opt.errCallback, 1)

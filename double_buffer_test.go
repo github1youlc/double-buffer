@@ -7,7 +7,6 @@ import (
 )
 
 type testLoader struct {
-
 }
 
 func (l *testLoader) Load(i interface{}) (bool, error) {
