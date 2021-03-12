@@ -16,8 +16,8 @@ type Loader interface {
 	Alloc() interface{}
 }
 
-// doubleBuffer double buffer, used to hot load
-type doubleBuffer struct {
+// DoubleBuffer double buffer, used to hot load
+type DoubleBuffer struct {
 	loader      Loader
 	bufferData  []interface{}
 	curIndex    int32
@@ -29,10 +29,10 @@ type doubleBuffer struct {
 }
 
 // NewDoubleBuffer create double buffer object
-func NewDoubleBuffer(loader Loader, option ...Option) *doubleBuffer {
+func NewDoubleBuffer(loader Loader, option ...Option) *DoubleBuffer {
 	opt := newOption(option...)
 
-	b := &doubleBuffer{
+	b := &DoubleBuffer{
 		loader:   loader,
 		curIndex: 0,
 		started:  0,
@@ -43,7 +43,7 @@ func NewDoubleBuffer(loader Loader, option ...Option) *doubleBuffer {
 }
 
 // load load data
-func (b *doubleBuffer) Start() {
+func (b *DoubleBuffer) Start() {
 	b.load()
 	go func() {
 		for {
@@ -55,7 +55,7 @@ func (b *doubleBuffer) Start() {
 	return
 }
 
-func (b *doubleBuffer) load() bool {
+func (b *DoubleBuffer) load() bool {
 	ci := 1 - atomic.LoadInt32(&b.curIndex)
 	updated, err := b.loader.Load(b.bufferData[ci])
 	if err != nil {
@@ -78,7 +78,7 @@ func (b *doubleBuffer) load() bool {
 }
 
 // Data get latest data
-func (b *doubleBuffer) Data() interface{} {
+func (b *DoubleBuffer) Data() interface{} {
 	ci := atomic.LoadInt32(&b.curIndex)
 	return b.bufferData[ci]
 }
