@@ -21,9 +21,7 @@ func TestFileDoubleBuffer(t *testing.T) {
 	done := make(chan struct{}, 1)
 	buffer := NewDoubleBuffer(
 		&testLoader{},
-		func() interface{} {
-			return 1
-		},
+		func() interface{} { return 1 },
 		WithInitCallback(
 			func() {
 				done <- struct{}{}
