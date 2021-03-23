@@ -19,10 +19,15 @@ func (l *testLoader) Alloc() interface{} {
 
 func TestFileDoubleBuffer(t *testing.T) {
 	done := make(chan struct{}, 1)
-	buffer := NewDoubleBuffer(&testLoader{}, WithInitCallback(
-		func() {
-			done <- struct{}{}
-		}))
+	buffer := NewDoubleBuffer(
+		&testLoader{},
+		func() interface{} {
+			return 1
+		},
+		WithInitCallback(
+			func() {
+				done <- struct{}{}
+			}))
 
 	buffer.Start()
 	<-done

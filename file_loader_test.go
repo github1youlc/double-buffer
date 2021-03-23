@@ -18,17 +18,20 @@ func TestFileLoader(t *testing.T) {
 	_, _ = f.Write([]byte("abc"))
 	assert.NoError(t, f.Close())
 
-	fl := NewFileLoader(LocalSingleFileLoadSystem, filePath, func() interface{} {
+	fl := NewFileLoader(
+		LocalSingleFileLoadSystem,
+		filePath,
+		func(reader io.Reader, i interface{}) error {
+			content, _ := ioutil.ReadAll(reader)
+			s := i.(*string)
+			*s = string(content)
+			return nil
+		})
+
+	buffer := NewDoubleBuffer(fl, func() interface{} {
 		var s string
 		return &s
-	}, func(reader io.Reader, i interface{}) error {
-		content, _ := ioutil.ReadAll(reader)
-		s := i.(*string)
-		*s = string(content)
-		return nil
 	})
-
-	buffer := NewDoubleBuffer(fl)
 	assert.True(t, buffer.load())
 	assert.EqualValues(t, "abc", *buffer.Data().(*string))
 

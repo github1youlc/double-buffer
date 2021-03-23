@@ -18,23 +18,21 @@ type FileLoadSystem interface {
 type FileLoader struct {
 	url        string
 	system     FileLoadSystem
-	alloc      allocFunc
-	load       loadFunc
+	load       LoadFunc
 	lastModify time.Time
 }
 
 // NewFileLoader
-func NewFileLoader(system FileLoadSystem, url string, alloc allocFunc, load loadFunc) *FileLoader {
+func NewFileLoader(system FileLoadSystem, url string, load LoadFunc) *FileLoader {
 	return &FileLoader{
 		url:    url,
 		system: system,
-		alloc:  alloc,
 		load:   load,
 	}
 }
 
-type allocFunc func() interface{}
-type loadFunc func(reader io.Reader, i interface{}) error
+// LoadFunc load from reader
+type LoadFunc func(reader io.Reader, i interface{}) error
 
 // Load implement loader.Load
 func (loader *FileLoader) Load(i interface{}) (bool, error) {
@@ -60,9 +58,4 @@ func (loader *FileLoader) Load(i interface{}) (bool, error) {
 	loader.lastModify = modifyTime
 
 	return detectNew, nil
-}
-
-// Alloc implement loader.Alloc
-func (loader *FileLoader) Alloc() interface{} {
-	return loader.alloc()
 }

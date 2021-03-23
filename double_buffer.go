@@ -11,9 +11,6 @@ type Loader interface {
 	// Load data to object
 	// If data is updated, return updated should be true
 	Load(i interface{}) (updated bool, err error)
-
-	// Alloc allocate the target object
-	Alloc() interface{}
 }
 
 // DoubleBuffer double buffer, used to hot load
@@ -28,8 +25,11 @@ type DoubleBuffer struct {
 	initOnce sync.Once
 }
 
+// Alloc allocate the target object
+type Alloc func() interface{}
+
 // NewDoubleBuffer create double buffer object
-func NewDoubleBuffer(loader Loader, option ...Option) *DoubleBuffer {
+func NewDoubleBuffer(loader Loader, alloc Alloc, option ...Option) *DoubleBuffer {
 	opt := newOption(option...)
 
 	b := &DoubleBuffer{
@@ -38,7 +38,7 @@ func NewDoubleBuffer(loader Loader, option ...Option) *DoubleBuffer {
 		started:  0,
 		opt:      opt,
 	}
-	b.bufferData = append(b.bufferData, loader.Alloc(), loader.Alloc())
+	b.bufferData = append(b.bufferData, alloc(), alloc())
 	return b
 }
 
