@@ -57,6 +57,7 @@ func (loader *FileLoader) Load(i interface{}) (bool, error) {
 	if err := loader.load(reader, i); err != nil {
 		return false, err
 	}
+	loader.lastModify = modifyTime
 
 	return detectNew, nil
 }
