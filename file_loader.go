@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// FileLoadSystem
+// FileLoadSystem 文件加载系统接口
 type FileLoadSystem interface {
 	// Detect the latest file and its modify time
 	Detect(url string) (filePath string, modify time.Time, err error)
@@ -14,7 +14,7 @@ type FileLoadSystem interface {
 	Read(filePath string) (io.Reader, error)
 }
 
-// FileLoader
+// FileLoader 文件加载器
 type FileLoader struct {
 	url        string
 	system     FileLoadSystem
@@ -22,7 +22,7 @@ type FileLoader struct {
 	lastModify time.Time
 }
 
-// NewFileLoader
+// NewFileLoader 创建文件加载器
 func NewFileLoader(system FileLoadSystem, url string, load LoadFunc) *FileLoader {
 	return &FileLoader{
 		url:    url,

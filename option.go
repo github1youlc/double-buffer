@@ -3,9 +3,10 @@ package dbuf
 import "time"
 
 type option struct {
-	errCallback    []func(error)
-	reloadInterval time.Duration
-	initCallback   func()
+	errCallback     []func(error)
+	updatedCallback []func()
+	reloadInterval  time.Duration
+	initCallback    func()
 }
 
 var DefaultReloadInterval = time.Second * 5
@@ -28,7 +29,7 @@ type Option func(option *option)
 // WithErrCallback set error callback
 func WithErrCallback(errCallback ...func(error)) Option {
 	return func(option *option) {
-		option.errCallback = errCallback
+		option.errCallback = append(option.errCallback, errCallback...)
 	}
 }
 
@@ -52,5 +53,12 @@ func WithReloadInterval(interval time.Duration) Option {
 func WithInitCallback(initCallback func()) Option {
 	return func(option *option) {
 		option.initCallback = initCallback
+	}
+}
+
+// WithUpdatedCallback 检测到更新，并成功更新成功的回调
+func WithUpdatedCallback(updatedCallback ...func()) Option {
+	return func(option *option) {
+		option.updatedCallback = append(option.updatedCallback, updatedCallback...)
 	}
 }

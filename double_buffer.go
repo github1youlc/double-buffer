@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Loader
+// Loader 加载器接口
 type Loader interface {
 	// Load data to object
 	// If data is updated, return updated should be true
@@ -42,7 +42,7 @@ func NewDoubleBuffer(loader Loader, alloc Alloc, option ...Option) *DoubleBuffer
 	return b
 }
 
-// load load data
+// Start load data first time and start go routine to check and load periodically
 func (b *DoubleBuffer) Start() {
 	b.load()
 	go func() {
@@ -72,6 +72,9 @@ func (b *DoubleBuffer) load() bool {
 					b.opt.initCallback()
 				}
 			})
+		for _, cb := range b.opt.updatedCallback {
+			cb()
+		}
 	}
 
 	return updated
